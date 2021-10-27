@@ -231,9 +231,9 @@ dependencies = [
 
 [[package]]
 name = "blake3"
-version = "1.0.0"
+version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "dcd555c66291d5f836dbb6883b48660ece810fe25a31f3bdfb911945dff2691f"
+checksum = "2607a74355ce2e252d0c483b2d8a348e1bba36036e786ccc2dcd777213c86ffd"
 dependencies = [
  "arrayref",
  "arrayvec 0.7.1",
@@ -770,7 +770,7 @@ dependencies = [
 
 [[package]]
 name = "emerald-paratime"
-version = "0.1.0"
+version = "1.0.0-alpha"
 dependencies = [
  "oasis-runtime-sdk",
  "oasis-runtime-sdk-evm",
@@ -790,15 +790,17 @@ checksum = "bfb684ac8fa8f6c5759f788862bb22ec6fe3cb392f6bfd08e3c64b603661e3f8"
 dependencies = [
  "crunchy",
  "fixed-hash",
+ "impl-codec",
  "impl-rlp",
+ "scale-info",
  "tiny-keccak 2.0.2",
 ]
 
 [[package]]
 name = "ethereum"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4a67be3eaf296ef668733f54c637e84d0ca34eaf194f0077455135981ad464c3"
+checksum = "81fb916554a4dba293ea69c69ad5653e21d770a9d0c2496b5fa0a1f5a3946d87"
 dependencies = [
  "bytes",
  "ethereum-types",
@@ -807,6 +809,7 @@ dependencies = [
  "parity-scale-codec",
  "rlp",
  "rlp-derive",
+ "scale-info",
  "serde",
  "sha3 0.9.1",
  "triehash",
@@ -820,16 +823,18 @@ checksum = "05136f7057fe789f06e6d41d07b34e6f70d8c86e5693b60f97aaa6553553bdaf"
 dependencies = [
  "ethbloom",
  "fixed-hash",
+ "impl-codec",
  "impl-rlp",
  "primitive-types",
+ "scale-info",
  "uint",
 ]
 
 [[package]]
 name = "evm"
-version = "0.30.1"
+version = "0.32.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3144301c57a81101003055c7cab61b58e68060f3bd1c54aa419f663e4f0e6347"
+checksum = "2256030d4b10a5da76f4f6a1f4b7bbf812f351ded74d4b747b4c1414a0023774"
 dependencies = [
  "environmental",
  "ethereum",
@@ -840,27 +845,29 @@ dependencies = [
  "parity-scale-codec",
  "primitive-types",
  "rlp",
+ "scale-info",
  "serde",
  "sha3 0.8.2",
 ]
 
 [[package]]
 name = "evm-core"
-version = "0.30.0"
+version = "0.32.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7bfa2dae9a2c6c0172d83c37eb406bfabf6a9d1af17b7ab4958e89853ddae97"
+checksum = "88acf9bfca4b068b86de667a8e21f531877f10516ffcb9088f1ca7f4e7107747"
 dependencies = [
  "funty",
  "parity-scale-codec",
  "primitive-types",
+ "scale-info",
  "serde",
 ]
 
 [[package]]
 name = "evm-gasometer"
-version = "0.30.0"
+version = "0.32.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14d5b12117cb9a5a9b9f031296ea86416da2cd9d8c9a9e3a2fa10275ae55f3ea"
+checksum = "b1a4a5614709e90bf010d27df99617d271857616efae06c64c3a1ebe50100ee8"
 dependencies = [
  "environmental",
  "evm-core",
@@ -870,9 +877,9 @@ dependencies = [
 
 [[package]]
 name = "evm-runtime"
-version = "0.30.0"
+version = "0.32.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3921ac8964cf13d12693392fef6686ef94470328ccd8eea384c6ff9ac0125b01"
+checksum = "c86168e1f038ef31d944b351d66ad8f95204c43ba8fffaf1afb765f21310b4ec"
 dependencies = [
  "environmental",
  "evm-core",
@@ -1088,9 +1095,9 @@ dependencies = [
 
 [[package]]
 name = "half"
-version = "1.8.0"
+version = "1.8.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ac5956d4e63858efaec57e0d6c1c2f6a41e1487f830314a324ccd7e2223a7ca0"
+checksum = "eabb4a44450da02c90444cf74558da904edde8fb4e9035a9a6a4e15445af0bd7"
 
 [[package]]
 name = "hash-db"
@@ -1300,9 +1307,9 @@ dependencies = [
 
 [[package]]
 name = "libc"
-version = "0.2.104"
+version = "0.2.105"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7b2f96d100e1cf1929e7719b7edb3b90ab5298072638fccd77be9ce942ecdfce"
+checksum = "869d572136620d55835903746bcb5cdc54cb2851fd0aeec53220b4bb65ef3013"
 
 [[package]]
 name = "libm"
@@ -1594,7 +1601,7 @@ dependencies = [
 [[package]]
 name = "oasis-core-client"
 version = "0.0.0"
-source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.1#788987aeb2552aa8ba9f57e694a29eb44d49b6f1"
+source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.3#f599be7597caa6ef0e02817801f787f5ff4b0dcc"
 dependencies = [
  "anyhow",
  "futures",
@@ -1608,7 +1615,7 @@ dependencies = [
 [[package]]
 name = "oasis-core-keymanager-api-common"
 version = "0.0.0"
-source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.1#788987aeb2552aa8ba9f57e694a29eb44d49b6f1"
+source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.3#f599be7597caa6ef0e02817801f787f5ff4b0dcc"
 dependencies = [
  "anyhow",
  "base64",
@@ -1625,7 +1632,7 @@ dependencies = [
 [[package]]
 name = "oasis-core-keymanager-client"
 version = "0.0.0"
-source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.1#788987aeb2552aa8ba9f57e694a29eb44d49b6f1"
+source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.3#f599be7597caa6ef0e02817801f787f5ff4b0dcc"
 dependencies = [
  "futures",
  "io-context",
@@ -1640,7 +1647,7 @@ dependencies = [
 [[package]]
 name = "oasis-core-runtime"
 version = "0.0.0"
-source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.1#788987aeb2552aa8ba9f57e694a29eb44d49b6f1"
+source = "git+https://github.com/oasisprotocol/oasis-core?tag=v21.3.3#f599be7597caa6ef0e02817801f787f5ff4b0dcc"
 dependencies = [
  "anyhow",
  "arbitrary",
@@ -1696,7 +1703,7 @@ dependencies = [
 [[package]]
 name = "oasis-runtime-sdk"
 version = "0.1.0"
-source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#4e604054a0cb282d1f29d1a544c702fc22b80292"
+source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#75125c4820bc466d1814094be566c0f8e099e628"
 dependencies = [
  "anyhow",
  "base64",
@@ -1728,7 +1735,7 @@ dependencies = [
 [[package]]
 name = "oasis-runtime-sdk-evm"
 version = "0.1.0"
-source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#4e604054a0cb282d1f29d1a544c702fc22b80292"
+source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#75125c4820bc466d1814094be566c0f8e099e628"
 dependencies = [
  "anyhow",
  "blake3",
@@ -1740,6 +1747,7 @@ dependencies = [
  "num",
  "oasis-cbor",
  "oasis-runtime-sdk",
+ "once_cell",
  "primitive-types",
  "ripemd160",
  "rlp",
@@ -1752,7 +1760,7 @@ dependencies = [
 [[package]]
 name = "oasis-runtime-sdk-macros"
 version = "0.1.0"
-source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#4e604054a0cb282d1f29d1a544c702fc22b80292"
+source = "git+https://github.com/oasisprotocol/oasis-sdk?branch=main#75125c4820bc466d1814094be566c0f8e099e628"
 dependencies = [
  "darling",
  "proc-macro2",
@@ -1949,9 +1957,9 @@ dependencies = [
 
 [[package]]
 name = "ppv-lite86"
-version = "0.2.14"
+version = "0.2.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c3ca011bd0129ff4ae15cd04c4eef202cadf6c51c21e47aba319b4e0501db741"
+checksum = "ed0cfbc8191465bed66e1718596ee0b0b35d5ee1f41c5df2189d0fe8bde535ba"
 
 [[package]]
 name = "primitive-types"
@@ -1963,6 +1971,7 @@ dependencies = [
  "impl-codec",
  "impl-num-traits",
  "impl-rlp",
+ "scale-info",
  "uint",
 ]
 
@@ -1990,9 +1999,9 @@ checksum = "bc881b2c22681370c6a780e47af9840ef841837bc98118431d4e1868bd0c1086"
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.30"
+version = "1.0.32"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "edc3358ebc67bc8b7fa0c007f945b0b18226f78437d61bec735a9eb96b61ee70"
+checksum = "ba508cc11742c0dc5c1659771673afbab7a0efab23aa17e854cbab0837ed0b43"
 dependencies = [
  "unicode-xid",
 ]
@@ -2239,6 +2248,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "scale-info"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5c55b744399c25532d63a0d2789b109df8d46fc93752d46b0782991a931a782f"
+dependencies = [
+ "bitvec 0.20.4",
+ "cfg-if 1.0.0",
+ "derive_more",
+ "parity-scale-codec",
+ "scale-info-derive",
+]
+
+[[package]]
+name = "scale-info-derive"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "baeb2780690380592f86205aa4ee49815feb2acad8c2f59e6dd207148c3f1fcd"
+dependencies = [
+ "proc-macro-crate",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "schnorrkel"
 version = "0.10.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2398,9 +2432,9 @@ dependencies = [
 
 [[package]]
 name = "signature"
-version = "1.3.1"
+version = "1.3.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c19772be3c4dd2ceaacf03cb41d5885f2a02c4d8804884918e3a258480803335"
+checksum = "f2807892cfa58e081aa1f1111391c7a0649d4fa127a4ffbe34bcbfb35a1171a4"
 dependencies = [
  "digest 0.9.0",
  "rand_core 0.6.3",
@@ -2541,9 +2575,9 @@ checksum = "734676eb262c623cec13c3155096e08d1f8f29adce39ba17948b18dad1e54142"
 
 [[package]]
 name = "syn"
-version = "1.0.80"
+version = "1.0.81"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d010a1623fbd906d51d650a9916aaefc05ffa0e4053ff7fe601167f3e715d194"
+checksum = "f2afee18b8beb5a596ecb4a2dce128c719b4ba399d34126b9e4396e3f9860966"
 dependencies = [
  "proc-macro2",
  "quote",
