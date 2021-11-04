@@ -1,6 +1,6 @@
 [package]
 name = "emerald-paratime"
-version = "1.0.0-alpha"
+version = "2.0.0-alpha"
 authors = ["Oasis Protocol Foundation <info@oasisprotocol.org>"]
 edition = "2018"
 license = "Apache-2.0"
@@ -14,3 +14,7 @@ threads = 6
 [dependencies]
 oasis-runtime-sdk = { git = "https://github.com/oasisprotocol/oasis-sdk", branch = "main" }
 module-evm = { git = "https://github.com/oasisprotocol/oasis-sdk", branch = "main", package = "oasis-runtime-sdk-evm" }
+
+[dev-dependencies]
+io-context = "0.2.0"
+cbor = { version = "0.2.1", package = "oasis-cbor" }
