@@ -2,16 +2,10 @@
 use std::collections::BTreeMap;
 
 use oasis_runtime_sdk::{
-    self as sdk,
-    module::InvariantHandler as _,
-    modules,
-    modules::accounts::API as _,
+    self as sdk, modules,
     types::token::{BaseUnits, Denomination},
-    Module, Version,
+    Version,
 };
-
-#[cfg(test)]
-mod test;
 
 /// Configuration of the various modules.
 pub struct Config;
@@ -106,10 +100,9 @@ impl sdk::Runtime for Runtime {
             modules::rewards::Genesis {
                 parameters: modules::rewards::Parameters {
                     schedule: modules::rewards::types::RewardSchedule {
-                        // TODO: Define propoer reward schedule.
                         steps: vec![modules::rewards::types::RewardStep {
-                            until: 26_700,
-                            amount: BaseUnits::new(1_000_000_000_000_000_000, Denomination::NATIVE),
+                            until: 27_500,
+                            amount: BaseUnits::new(3_000_000_000_000_000_000, Denomination::NATIVE),
                         }],
                     },
                     participation_threshold_numerator: 3,
@@ -122,65 +115,5 @@ impl sdk::Runtime for Runtime {
                 },
             },
         )
-    }
-
-    fn migrate_state<C: sdk::Context>(ctx: &mut C) {
-        // State migration from by copying over parameters from updated genesis state.
-        let genesis = Self::genesis_state();
-
-        // Determine configured scaling factor for migration below.
-        let scaling_factor = genesis.2.parameters.consensus_scaling_factor.into();
-
-        // Accounts.
-        modules::accounts::Module::set_params(ctx.runtime_state(), genesis.1.parameters);
-        // Consensus.
-        modules::consensus::Module::set_params(ctx.runtime_state(), genesis.2.parameters);
-        // Rewards.
-        modules::rewards::Module::<modules::accounts::Module>::set_params(
-            ctx.runtime_state(),
-            genesis.4.parameters,
-        );
-
-        // Migrate accounts such that all base units for the native denomination are scaled.
-        let mut new_total_supply = 0u128;
-        for address in
-            modules::accounts::Module::get_addresses(ctx.runtime_state(), Denomination::NATIVE)
-                .unwrap()
-        {
-            // Fetch original balance for the account.
-            let amount = modules::accounts::Module::get_balance(
-                ctx.runtime_state(),
-                address,
-                Denomination::NATIVE,
-            )
-            .unwrap();
-            // Multiply it by 10^9.
-            let amount = amount.checked_mul(scaling_factor).unwrap();
-            modules::accounts::Module::set_balance(
-                ctx.runtime_state(),
-                address,
-                &BaseUnits::new(amount, Denomination::NATIVE),
-            );
-            // Compute new total supply as a sanity check.
-            new_total_supply = new_total_supply.checked_add(amount).unwrap();
-        }
-
-        if new_total_supply > 0 {
-            // Update total supply.
-            let total_supplies =
-                modules::accounts::Module::get_total_supplies(ctx.runtime_state()).unwrap();
-            let total_supply = total_supplies.get(&Denomination::NATIVE).unwrap();
-            let total_supply = total_supply.checked_mul(scaling_factor).unwrap();
-            // Make sure that both supplies match.
-            assert!(total_supply == new_total_supply);
-            // Update total supply.
-            modules::accounts::Module::set_total_supply(
-                ctx.runtime_state(),
-                &BaseUnits::new(total_supply, Denomination::NATIVE),
-            );
-        }
-
-        // Run invariant check after migration.
-        Self::Modules::check_invariants(ctx).unwrap();
     }
 }
