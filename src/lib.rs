@@ -10,10 +10,29 @@ use oasis_runtime_sdk::{
 /// Configuration of the various modules.
 pub struct Config;
 
+/// Determine whether the build is for Testnet.
+///
+/// If the crate version has a pre-release component (e.g. 3.0.0-alpha) then the build is classified
+/// as Testnet. If there is no such component (e.g. 5.0.0) then it is classified as Mainnet.
+const fn is_testnet() -> bool {
+    !env!("CARGO_PKG_VERSION_PRE").is_empty()
+}
+
+/// Determine EVM chain ID to use depending on whether the build is for Testnet or Mainnet.
+const fn chain_id() -> u64 {
+    if is_testnet() {
+        // Testnet.
+        0xa515
+    } else {
+        // Mainnet.
+        0xa516
+    }
+}
+
 impl module_evm::Config for Config {
     type Accounts = modules::accounts::Module;
 
-    const CHAIN_ID: u64 = 0xa515;
+    const CHAIN_ID: u64 = chain_id();
 
     const TOKEN_DENOMINATION: Denomination = Denomination::NATIVE;
 }
