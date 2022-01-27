@@ -2,7 +2,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 
 use oasis_runtime_sdk::{
-    self as sdk, modules,
+    self as sdk, config, modules,
     types::token::{BaseUnits, Denomination},
     Version,
 };
@@ -57,6 +57,14 @@ impl sdk::Runtime for Runtime {
     /// Current version of the global state (e.g. parameters). Any parameter updates should bump
     /// this version in order for the migrations to be executed.
     const STATE_VERSION: u32 = 1;
+
+    /// Schedule control configuration.
+    const SCHEDULE_CONTROL: Option<config::ScheduleControl> = Some(config::ScheduleControl {
+        initial_batch_size: 50,
+        batch_size: 50,
+        min_remaining_gas: 1_000, // accounts.Transfer method calls.
+        max_tx_count: 1_000,      // Consistent with runtime descriptor.
+    });
 
     type Core = modules::core::Module<Config>;
 
