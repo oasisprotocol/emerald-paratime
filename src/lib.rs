@@ -93,7 +93,7 @@ impl sdk::Runtime for Runtime {
                         mgp.insert(Denomination::NATIVE, 0);
                         mgp
                     },
-                    max_batch_gas: 10_000_000,
+                    max_batch_gas: if is_testnet() { 30_000_000 } else { 10_000_000 },
                     max_tx_signers: 1,
                     max_multisig_signers: 8,
                     gas_costs: modules::core::GasCosts {
