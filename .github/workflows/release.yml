@@ -19,6 +19,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Set up Go 1.17
+        uses: actions/setup-go@v3
+        with:
+          go-version: "1.17.x"
+
       - name: Build tagged release, elf
         id: build-elf
         uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
@@ -27,8 +32,15 @@ jobs:
           binaries: emerald-paratime
           clean: no
 
+      - name: Create the Oasis Runtime Container
+        run: |
+          go install github.com/oasisprotocol/oasis-sdk/tools/orc@latest
+          orc init ${RUNTIME_EXECUTABLE}
+        env:
+          RUNTIME_EXECUTABLE: ${{ github.workspace }}/${{ steps.build-elf.outputs.build-path }}/emerald-paratime
+
       - name: Publish the release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: ${{ github.workspace }}/${{ steps.build-elf.outputs.build-path }}/emerald-paratime
+          artifacts: emerald-paratime.orc
           token: ${{ secrets.GITHUB_TOKEN }}
