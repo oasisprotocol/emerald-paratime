@@ -1,10 +1,16 @@
 [package]
 name = "emerald-paratime"
-version = "7.0.0-rc1"
+version = "7.0.0-rc2"
 authors = ["Oasis Protocol Foundation <info@oasisprotocol.org>"]
 edition = "2018"
 license = "Apache-2.0"
 resolver = "2"
+
+[package.metadata.orc.release]
+runtime-id = "000000000000000000000000000000000000000000000000e2eaa99fc008f87f"
+
+[package.metadata.orc.test]
+runtime-id = "00000000000000000000000000000000000000000000000072c8215e60d5bca7"
 
 [package.metadata.fortanix-sgx]
 heap-size = 134217728
