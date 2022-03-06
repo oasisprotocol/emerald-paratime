@@ -742,7 +742,7 @@ dependencies = [
 
 [[package]]
 name = "emerald-paratime"
-version = "7.0.0-rc2"
+version = "7.1.0-rc1"
 dependencies = [
  "io-context",
  "oasis-cbor",
