@@ -44,3 +44,4 @@ jobs:
         with:
           artifacts: emerald-paratime.orc
           token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
