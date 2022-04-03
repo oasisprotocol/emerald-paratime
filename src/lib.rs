@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use oasis_runtime_sdk::{
     self as sdk, config, modules,
     types::token::{BaseUnits, Denomination},
-    Version,
+    Module, Version,
 };
 
 /// Configuration of the various modules.
@@ -56,7 +56,7 @@ impl sdk::Runtime for Runtime {
     const VERSION: Version = sdk::version_from_cargo!();
     /// Current version of the global state (e.g. parameters). Any parameter updates should bump
     /// this version in order for the migrations to be executed.
-    const STATE_VERSION: u32 = 1;
+    const STATE_VERSION: u32 = 2;
 
     /// Schedule control configuration.
     const SCHEDULE_CONTROL: Option<config::ScheduleControl> = Some(config::ScheduleControl {
@@ -90,7 +90,7 @@ impl sdk::Runtime for Runtime {
                 parameters: modules::core::Parameters {
                     min_gas_price: {
                         let mut mgp = BTreeMap::new();
-                        mgp.insert(Denomination::NATIVE, 0);
+                        mgp.insert(Denomination::NATIVE, 10_000_000_000);
                         mgp
                     },
                     max_batch_gas: if is_testnet() { 30_000_000 } else { 10_000_000 },
@@ -156,5 +156,29 @@ impl sdk::Runtime for Runtime {
                 },
             },
         )
+    }
+
+    fn migrate_state<C: sdk::Context>(ctx: &mut C) {
+        // State migration from by copying over parameters from updated genesis state.
+        let genesis = Self::genesis_state();
+
+        // Core.
+        modules::core::Module::<Config>::set_params(ctx.runtime_state(), genesis.0.parameters);
+        // Accounts.
+        modules::accounts::Module::set_params(ctx.runtime_state(), genesis.1.parameters);
+        // Consensus layer interface.
+        modules::consensus::Module::set_params(ctx.runtime_state(), genesis.2.parameters);
+        // Consensus layer accounts.
+        modules::consensus_accounts::Module::<modules::accounts::Module, modules::consensus::Module>::set_params(
+            ctx.runtime_state(),
+            genesis.3.parameters,
+        );
+        // Rewards.
+        modules::rewards::Module::<modules::accounts::Module>::set_params(
+            ctx.runtime_state(),
+            genesis.4.parameters,
+        );
+        // EVM.
+        module_evm::Module::<Config>::set_params(ctx.runtime_state(), genesis.5.parameters);
     }
 }
