@@ -38,6 +38,10 @@ impl modules::core::Config for Config {
     /// Methods which are exempt from minimum gas price requirements.
     const MIN_GAS_PRICE_EXEMPT_METHODS: once_cell::unsync::Lazy<BTreeSet<&'static str>> =
         once_cell::unsync::Lazy::new(|| BTreeSet::from(["consensus.Deposit"]));
+
+    /// Default local estimate gas max search iterations configuration that is used in case no overrides
+    /// are set in the local per-node configuration.
+    const DEFAULT_LOCAL_ESTIMATE_GAS_SEARCH_MAX_ITERS: u64 = if is_testnet() { 25 } else { 23 }; // log2(max_batch_gas) for exact estimates.
 }
 
 impl module_evm::Config for Config {
@@ -59,12 +63,12 @@ impl sdk::Runtime for Runtime {
     const STATE_VERSION: u32 = 2;
 
     /// Schedule control configuration.
-    const SCHEDULE_CONTROL: Option<config::ScheduleControl> = Some(config::ScheduleControl {
+    const SCHEDULE_CONTROL: config::ScheduleControl = config::ScheduleControl {
         initial_batch_size: 50,
         batch_size: 50,
         min_remaining_gas: 1_000, // accounts.Transfer method calls.
         max_tx_count: 1_000,      // Consistent with runtime descriptor.
-    });
+    };
 
     type Core = modules::core::Module<Config>;
 
@@ -102,6 +106,7 @@ impl sdk::Runtime for Runtime {
                         auth_multisig_signer: 1_000,
                         callformat_x25519_deoxysii: 10_000,
                     },
+                    max_tx_size: 1024 * 300, // 300 KiB.
                 },
             },
             modules::accounts::Genesis {
