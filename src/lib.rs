@@ -29,6 +29,18 @@ const fn chain_id() -> u64 {
     }
 }
 
+/// Determine state version on weather the build is for Testnet or Mainnet.
+#[allow(clippy::if_same_then_else)]
+const fn state_version() -> u32 {
+    if is_testnet() {
+        // Testnet.
+        3
+    } else {
+        // Mainnet.
+        3
+    }
+}
+
 impl modules::core::Config for Config {
     /// Default local minimum gas price configuration that is used in case no overrides are set in
     /// local per-node configuration.
@@ -60,7 +72,7 @@ impl sdk::Runtime for Runtime {
     const VERSION: Version = sdk::version_from_cargo!();
     /// Current version of the global state (e.g. parameters). Any parameter updates should bump
     /// this version in order for the migrations to be executed.
-    const STATE_VERSION: u32 = 3;
+    const STATE_VERSION: u32 = state_version();
 
     /// Schedule control configuration.
     const SCHEDULE_CONTROL: config::ScheduleControl = config::ScheduleControl {
