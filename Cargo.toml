@@ -1,6 +1,6 @@
 [package]
 name = "emerald-paratime"
-version = "9.0.1-testnet"
+version = "9.0.1"
 authors = ["Oasis Protocol Foundation <info@oasisprotocol.org>"]
 edition = "2018"
 license = "Apache-2.0"
