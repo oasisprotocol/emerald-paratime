@@ -24,6 +24,26 @@ jobs:
         with:
           go-version: "1.18.x"
 
+      - name: Build tagged release, elf, debug
+        id: build-debug-elf
+        uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
+        with:
+          image: oasisprotocol/runtime-builder:main
+          pkg-dirs: runtime
+          binaries: emerald-paratime
+          clean: no
+          setup: |
+            export OASIS_UNSAFE_USE_LOCALNET_CHAINID=1
+
+      - name: Create the debug Oasis Runtime Container
+        run: |
+          go install github.com/oasisprotocol/oasis-sdk/tools/orc@latest
+          pushd runtime
+          orc init ${RUNTIME_EXECUTABLE} --output ../localnet-emerald-paratime.orc
+          popd
+        env:
+          RUNTIME_EXECUTABLE: ${{ github.workspace }}/${{ steps.build-debug-elf.outputs.build-path }}/emerald-paratime
+
       - name: Build tagged release, elf
         id: build-elf
         uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
@@ -42,6 +62,6 @@ jobs:
       - name: Publish the release
         uses: ncipollo/release-action@v1
         with:
-          artifacts: emerald-paratime.orc
+          artifacts: emerald-paratime.orc,localnet-emerald-paratime.orc
           token: ${{ secrets.GITHUB_TOKEN }}
           draft: true
