@@ -29,7 +29,6 @@ jobs:
         uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
         with:
           image: oasisprotocol/runtime-builder:main
-          pkg-dirs: runtime
           binaries: emerald-paratime
           clean: no
           setup: |
@@ -38,9 +37,7 @@ jobs:
       - name: Create the debug Oasis Runtime Container
         run: |
           go install github.com/oasisprotocol/oasis-sdk/tools/orc@latest
-          pushd runtime
-          orc init ${RUNTIME_EXECUTABLE} --output ../localnet-emerald-paratime.orc
-          popd
+          orc init ${RUNTIME_EXECUTABLE} --output localnet-emerald-paratime.orc
         env:
           RUNTIME_EXECUTABLE: ${{ github.workspace }}/${{ steps.build-debug-elf.outputs.build-path }}/emerald-paratime
 
