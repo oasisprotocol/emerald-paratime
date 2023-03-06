@@ -37,7 +37,7 @@ jobs:
       - name: Create the debug Oasis Runtime Container
         run: |
           go install github.com/oasisprotocol/oasis-sdk/tools/orc@latest
-          orc init ${RUNTIME_EXECUTABLE} --output localnet-emerald-paratime.orc
+          orc init ${RUNTIME_EXECUTABLE} --output localnet-emerald-paratime.orc --runtime-id 8000000000000000000000000000000000000000000000000000000000000000
         env:
           RUNTIME_EXECUTABLE: ${{ github.workspace }}/${{ steps.build-debug-elf.outputs.build-path }}/emerald-paratime
 
