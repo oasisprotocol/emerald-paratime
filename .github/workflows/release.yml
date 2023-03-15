@@ -28,7 +28,7 @@ jobs:
         id: build-debug-elf
         uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
         with:
-          image: oasisprotocol/runtime-builder:main
+          image: ghcr.io/oasisprotocol/runtime-builder:main
           binaries: emerald-paratime
           clean: no
           setup: |
@@ -45,7 +45,7 @@ jobs:
         id: build-elf
         uses: oasisprotocol/oasis-sdk/.github/actions/hash-rust@main
         with:
-          image: oasisprotocol/runtime-builder:main
+          image: ghcr.io/oasisprotocol/runtime-builder:main
           binaries: emerald-paratime
           clean: no
 
