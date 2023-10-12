@@ -1,4 +1,6 @@
 //! The Emerald ParaTime.
+#![deny(rust_2018_idioms, single_use_lifetimes, unreachable_pub)]
+
 use std::collections::{BTreeMap, BTreeSet};
 
 use oasis_runtime_sdk::{
@@ -6,6 +8,7 @@ use oasis_runtime_sdk::{
     types::token::{BaseUnits, Denomination},
     Module, Version,
 };
+use once_cell::unsync::Lazy;
 
 /// Configuration of the various modules.
 pub struct Config;
@@ -37,7 +40,7 @@ const fn chain_id() -> u64 {
 const fn state_version() -> u32 {
     if is_testnet() {
         // Testnet.
-        3
+        4
     } else {
         // Mainnet.
         3
@@ -47,12 +50,12 @@ const fn state_version() -> u32 {
 impl modules::core::Config for Config {
     /// Default local minimum gas price configuration that is used in case no overrides are set in
     /// local per-node configuration.
-    const DEFAULT_LOCAL_MIN_GAS_PRICE: once_cell::unsync::Lazy<BTreeMap<Denomination, u128>> =
-        once_cell::unsync::Lazy::new(|| BTreeMap::from([(Denomination::NATIVE, 100_000_000_000)]));
+    const DEFAULT_LOCAL_MIN_GAS_PRICE: Lazy<BTreeMap<Denomination, u128>> =
+        Lazy::new(|| BTreeMap::from([(Denomination::NATIVE, 100_000_000_000)]));
 
     /// Methods which are exempt from minimum gas price requirements.
-    const MIN_GAS_PRICE_EXEMPT_METHODS: once_cell::unsync::Lazy<BTreeSet<&'static str>> =
-        once_cell::unsync::Lazy::new(|| BTreeSet::from(["consensus.Deposit"]));
+    const MIN_GAS_PRICE_EXEMPT_METHODS: Lazy<BTreeSet<&'static str>> =
+        Lazy::new(|| BTreeSet::from(["consensus.Deposit"]));
 
     /// Default local estimate gas max search iterations configuration that is used in case no overrides
     /// are set in the local per-node configuration.
@@ -109,12 +112,8 @@ impl sdk::Runtime for Runtime {
         (
             modules::core::Genesis {
                 parameters: modules::core::Parameters {
-                    min_gas_price: {
-                        let mut mgp = BTreeMap::new();
-                        mgp.insert(Denomination::NATIVE, 100_000_000_000);
-                        mgp
-                    },
-                    max_batch_gas: if is_testnet() { 30_000_000 } else { 10_000_000 },
+                    min_gas_price: { BTreeMap::from([(Denomination::NATIVE, 100_000_000_000)]) },
+                    max_batch_gas: if is_testnet() { 30_000_000 } else { 15_000_000 },
                     max_tx_signers: 1,
                     max_multisig_signers: 8,
                     gas_costs: modules::core::GasCosts {
@@ -150,14 +149,25 @@ impl sdk::Runtime for Runtime {
                     consensus_denomination: Denomination::NATIVE,
                     // Scale to 18 decimal places as this is what is expected in the EVM ecosystem.
                     consensus_scaling_factor: 1_000_000_000,
+                    // Minimum delegation amount that matches the consensus layer.
+                    min_delegate_amount: 100_000_000_000,
                 },
             },
             modules::consensus_accounts::Genesis {
                 parameters: modules::consensus_accounts::Parameters {
                     gas_costs: modules::consensus_accounts::GasCosts {
-                        tx_deposit: 10_000,
-                        tx_withdraw: 10_000,
+                        tx_deposit: 60_000,
+                        tx_withdraw: 60_000,
+                        tx_delegate: 60_000,
+                        tx_undelegate: 120_000,
+
+                        store_receipt: 20_000,
+                        take_receipt: 15_000,
                     },
+                    disable_delegate: false,
+                    disable_undelegate: false,
+                    disable_deposit: false,
+                    disable_withdraw: false,
                 },
             },
             modules::rewards::Genesis {
@@ -180,27 +190,23 @@ impl sdk::Runtime for Runtime {
         )
     }
 
-    fn migrate_state<C: sdk::Context>(ctx: &mut C) {
+    fn migrate_state<C: sdk::Context>(_ctx: &mut C) {
         // State migration from by copying over parameters from updated genesis state.
         let genesis = Self::genesis_state();
 
         // Core.
-        modules::core::Module::<Config>::set_params(ctx.runtime_state(), genesis.0.parameters);
+        modules::core::Module::<Config>::set_params(genesis.0.parameters);
         // Accounts.
-        modules::accounts::Module::set_params(ctx.runtime_state(), genesis.1.parameters);
+        modules::accounts::Module::set_params(genesis.1.parameters);
         // Consensus layer interface.
-        modules::consensus::Module::set_params(ctx.runtime_state(), genesis.2.parameters);
+        modules::consensus::Module::set_params(genesis.2.parameters);
         // Consensus layer accounts.
         modules::consensus_accounts::Module::<modules::accounts::Module, modules::consensus::Module>::set_params(
-            ctx.runtime_state(),
             genesis.3.parameters,
         );
         // Rewards.
-        modules::rewards::Module::<modules::accounts::Module>::set_params(
-            ctx.runtime_state(),
-            genesis.4.parameters,
-        );
+        modules::rewards::Module::<modules::accounts::Module>::set_params(genesis.4.parameters);
         // EVM.
-        module_evm::Module::<Config>::set_params(ctx.runtime_state(), genesis.5.parameters);
+        module_evm::Module::<Config>::set_params(genesis.5.parameters);
     }
 }
