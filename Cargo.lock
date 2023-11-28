@@ -982,7 +982,7 @@ dependencies = [
 
 [[package]]
 name = "emerald-paratime"
-version = "11.0.0-testnet"
+version = "11.0.0"
 dependencies = [
  "oasis-runtime-sdk",
  "oasis-runtime-sdk-evm",
