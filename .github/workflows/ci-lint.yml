@@ -17,11 +17,17 @@ on:
       - stable/*
       - rc/*
 
+env:
+  CMAKE_POLICY_VERSION_MINIMUM: "3.5"
+
 jobs:
   lint-rust:
     # NOTE: This name appears in GitHub's Checks API.
     name: lint-rust
     runs-on: ubuntu-latest
+    env:
+      # Use clang-21 to avoid mbedtls bindgen issues.
+      LIBCLANG_PATH: /usr/lib/llvm-21/lib
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
@@ -30,7 +36,7 @@ jobs:
         run: rustup show
 
       - name: Install protoc
-        run: sudo apt install -y protobuf-compiler
+        run: sudo apt update && sudo apt install -y protobuf-compiler
 
       - name: Clippy check
         run: cargo clippy --all-features --locked -- -D warnings -D clippy::dbg_macro
