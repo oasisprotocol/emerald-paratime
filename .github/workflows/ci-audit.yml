@@ -6,15 +6,14 @@ on:
   # A push modifies one of the matches files.
   push:
     paths:
-      - '**/Cargo.toml'
-      - '**/Cargo.lock'
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
 
 jobs:
-
   audit:
     # NOTE: This name appears in GitHub's Checks API.
     name: audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - run: cargo audit

@@ -13,14 +13,13 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-
   check-reproducible-build:
     # NOTE: This name appears in GitHub's Checks API.
     name: check-reproducibility
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Build runtime, 1.
         id: build-1
