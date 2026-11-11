@@ -2836,9 +2836,9 @@ dependencies = [
 
 [[package]]
 name = "rsa"
-version = "0.10.0"
+version = "0.10.0-rc.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "23e77fd77e0dea28b3011fd62d15445b7de7959333b0276d930e03be0f755699"
+checksum = "47cf9537fc2210e5db7a35a1cdda9d8d451b9df6fba234ec1cf0cd746c120c35"
 dependencies = [
  "const-oid 0.10.3",
  "crypto-bigint",
