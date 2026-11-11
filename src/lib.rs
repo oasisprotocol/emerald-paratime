@@ -51,11 +51,11 @@ impl modules::core::Config for Config {
     /// Default local minimum gas price configuration that is used in case no overrides are set in
     /// local per-node configuration.
     const DEFAULT_LOCAL_MIN_GAS_PRICE: Lazy<BTreeMap<Denomination, u128>> =
-        Lazy::new(|| BTreeMap::from([(Denomination::NATIVE, 100_000_000_000)]));
+        Lazy::new(|| [(Denomination::NATIVE, 100_000_000_000)].into());
 
     /// Methods which are exempt from minimum gas price requirements.
     const MIN_GAS_PRICE_EXEMPT_METHODS: Lazy<BTreeSet<&'static str>> =
-        Lazy::new(|| BTreeSet::from(["consensus.Deposit"]));
+        Lazy::new(|| ["consensus.Deposit"].into());
 
     /// Default local estimate gas max search iterations configuration that is used in case no overrides
     /// are set in the local per-node configuration.
@@ -63,8 +63,6 @@ impl modules::core::Config for Config {
 }
 
 impl module_evm::Config for Config {
-    type Accounts = modules::accounts::Module;
-
     type AdditionalPrecompileSet = ();
 
     const CHAIN_ID: u64 = chain_id();
@@ -90,7 +88,12 @@ impl sdk::Runtime for Runtime {
         max_tx_count: 1_000,      // Consistent with runtime descriptor.
     };
 
+    /// Maximum delta that the transaction nonce can be in the future from the current nonce
+    /// to still be accepted during transaction checks.
+    const MAX_CHECK_NONCE_FUTURE_DELTA: u64 = 31;
+
     type Core = modules::core::Module<Config>;
+    type Accounts = modules::accounts::Module;
 
     #[allow(clippy::type_complexity)]
     type Modules = (
@@ -101,9 +104,9 @@ impl sdk::Runtime for Runtime {
         // Consensus layer interface.
         modules::consensus::Module,
         // Consensus layer accounts.
-        modules::consensus_accounts::Module<modules::accounts::Module, modules::consensus::Module>,
+        modules::consensus_accounts::Module<modules::consensus::Module>,
         // Rewards.
-        modules::rewards::Module<modules::accounts::Module>,
+        modules::rewards::Module,
         // EVM.
         module_evm::Module<Config>,
     );
@@ -113,31 +116,35 @@ impl sdk::Runtime for Runtime {
             modules::core::Genesis {
                 parameters: modules::core::Parameters {
                     min_gas_price: { BTreeMap::from([(Denomination::NATIVE, 100_000_000_000)]) },
+                    dynamic_min_gas_price: modules::core::DynamicMinGasPrice {
+                        enabled: true,
+                        target_block_gas_usage_percentage: 50,
+                        min_price_max_change_denominator: 8,
+                    },
                     max_batch_gas: if is_testnet() { 30_000_000 } else { 15_000_000 },
+                    max_tx_size: 1024 * 300, // 300 KiB.
                     max_tx_signers: 1,
                     max_multisig_signers: 8,
                     gas_costs: modules::core::GasCosts {
                         tx_byte: 1,
+                        storage_byte: 15,
                         auth_signature: 1_000,
                         auth_multisig_signer: 1_000,
                         callformat_x25519_deoxysii: 10_000,
                     },
-                    max_tx_size: 1024 * 300, // 300 KiB.
                 },
             },
             modules::accounts::Genesis {
                 parameters: modules::accounts::Parameters {
                     gas_costs: modules::accounts::GasCosts { tx_transfer: 1_000 },
                     denomination_infos: {
-                        let mut denomination_infos = BTreeMap::new();
-                        denomination_infos.insert(
+                        BTreeMap::from([(
                             Denomination::NATIVE,
                             modules::accounts::types::DenominationInfo {
                                 // Consistent with EVM ecosystem.
                                 decimals: 18,
                             },
-                        );
-                        denomination_infos
+                        )])
                     },
                     ..Default::default()
                 },
@@ -145,6 +152,7 @@ impl sdk::Runtime for Runtime {
             },
             modules::consensus::Genesis {
                 parameters: modules::consensus::Parameters {
+                    gas_costs: modules::consensus::GasCosts { round_root: 10_000 },
                     // Consensus layer denomination is the native denomination of this runtime.
                     consensus_denomination: Denomination::NATIVE,
                     // Scale to 18 decimal places as this is what is expected in the EVM ecosystem.
@@ -163,6 +171,9 @@ impl sdk::Runtime for Runtime {
 
                         store_receipt: 20_000,
                         take_receipt: 15_000,
+
+                        delegation: 10_000,
+                        shares_to_tokens: 10_000,
                     },
                     disable_delegate: false,
                     disable_undelegate: false,
@@ -190,7 +201,7 @@ impl sdk::Runtime for Runtime {
         )
     }
 
-    fn migrate_state<C: sdk::Context>(_ctx: &mut C) {
+    fn migrate_state<C: sdk::Context>(_ctx: &C) {
         // State migration from by copying over parameters from updated genesis state.
         let genesis = Self::genesis_state();
 
@@ -201,11 +212,11 @@ impl sdk::Runtime for Runtime {
         // Consensus layer interface.
         modules::consensus::Module::set_params(genesis.2.parameters);
         // Consensus layer accounts.
-        modules::consensus_accounts::Module::<modules::accounts::Module, modules::consensus::Module>::set_params(
+        modules::consensus_accounts::Module::<modules::consensus::Module>::set_params(
             genesis.3.parameters,
         );
         // Rewards.
-        modules::rewards::Module::<modules::accounts::Module>::set_params(genesis.4.parameters);
+        modules::rewards::Module::set_params(genesis.4.parameters);
         // EVM.
         module_evm::Module::<Config>::set_params(genesis.5.parameters);
     }

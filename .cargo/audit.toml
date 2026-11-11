@@ -1,6 +1,6 @@
 [advisories]
 ignore = [
-    "RUSTSEC-2020-0071", # Old version of `time` crate is used by a lot of deps.
-    "RUSTSEC-2022-0093", # Remove once we can update to ed25519-dalek to v2.
     "RUSTSEC-2023-0071", # Does not affect our current use of the library.
+    "RUSTSEC-2024-0421", # Fix when SDK is updated to 0.18.0 or later.
+    "RUSTSEC-2026-0387", # Fix when SDK is updated to 0.18.0 or later.
 ]
