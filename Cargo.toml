@@ -14,9 +14,9 @@ runtime-id = "00000000000000000000000000000000000000000000000072c8215e60d5bca7"
 
 [dependencies]
 # SDK.
-oasis-runtime-sdk = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.17.0" }
-module-evm = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.17.0", package = "oasis-runtime-sdk-evm" }
-module-rofl-market = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.17.0", package = "oasis-runtime-sdk-rofl-market" }
+oasis-runtime-sdk = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.18.0" }
+module-evm = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.18.0", package = "oasis-runtime-sdk-evm" }
+module-rofl-market = { git = "https://github.com/oasisprotocol/oasis-sdk", tag = "runtime-sdk/v0.18.0", package = "oasis-runtime-sdk-rofl-market" }
 
 # Third party.
 once_cell = "1.8.0"
